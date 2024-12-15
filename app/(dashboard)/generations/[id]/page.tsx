@@ -1,12 +1,18 @@
-import { cookies } from "next/headers";
 import NovelEditor from "../_components/novel-editor";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function GenerationPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const savedContent = cookies().get("editorContent")?.value;
-  if (!savedContent) return null;
-  return <NovelEditor savedContent={savedContent} />;
+  const supabase = await createClient();
+
+  const { data: generation } = await supabase
+    .from("generations")
+    .select("*")
+    .eq("id", params.id)
+    .single();
+  if (!generation) return null;
+  return <NovelEditor savedContent={generation.content} />;
 }

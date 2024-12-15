@@ -1,8 +1,8 @@
 "use server";
-import { prompts, toolsConfig } from "../toolsConfig";
+import { createClient } from "@/lib/supabase/server";
+import { prompts } from "../toolsConfig";
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -62,6 +62,15 @@ const novelEditorSchema = z.object({
 });
 
 export const createGeneration = async (formData: FormData) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return {
+      error: "User not found",
+    };
+  }
   const toolName = formData.get("toolName");
   console.log(formData);
   if (!toolName) {
@@ -80,12 +89,21 @@ export const createGeneration = async (formData: FormData) => {
     ],
   });
 
-  cookies().set("editorContent", JSON.stringify(response.object), {
-    maxAge: 3600, // 1 hour
-    path: "/",
-  });
+  const { data, error } = await supabase
+    .from("generations")
+    .insert({
+      content: JSON.stringify(response.object),
+      type: toolName as string,
+      user_id: user.id,
+    })
+    .select()
+    .single();
 
-  return redirect(
-    `/generations/${Math.random().toString(36).substring(2, 15)}`
-  );
+  if (error) {
+    return {
+      error: "Failed to create generation",
+    };
+  }
+
+  return redirect(`/generations/${data.id}`);
 };

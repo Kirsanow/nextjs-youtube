@@ -2,10 +2,12 @@
 import SVGLogo from "@/components/svg-logo";
 import Link from "next/link";
 import { config } from "@/config";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 const AppHeader = () => {
   const pathname = usePathname();
+  const router = useRouter();
   return (
     <div className="sticky -top-16 z-20 border-b border-slate-200 bg-slate-50">
       <div className="mx-auto w-full max-w-screen-xl px-2.5 lg:px-20">
@@ -37,7 +39,11 @@ const AppHeader = () => {
               Help
             </a>
             <button
-              onClick={() => {}}
+              onClick={() => {
+                const supabase = createClient();
+                supabase.auth.signOut();
+                router.push("/login");
+              }}
               className="hidden text-sm text-slate-500 transition-colors hover:text-slate-700 sm:block"
             >
               Sign Out

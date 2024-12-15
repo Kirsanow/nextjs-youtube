@@ -82,7 +82,7 @@ const GenerationCreateModal = ({
         <form action={formAction}>
           <div className="flex flex-col gap-4">{renderFields()}</div>
           <DialogFooter>
-            <Button disabled={pending} type="submit">
+            <Button className="mt-2" disabled={pending} type="submit">
               {pending ? "Generating..." : "Generate"}
             </Button>
             {state.error && <p className="text-red-500">{state.error}</p>}

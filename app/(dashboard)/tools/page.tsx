@@ -1,7 +1,15 @@
+import { createClient } from "@/lib/supabase/server";
 import { Tool, toolsConfig } from "./toolsConfig";
 import Link from "next/link";
 
-export default function ToolsPage() {
+export default async function ToolsPage() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  console.log(user);
   return (
     <div className="mx-auto flex flex-col w-full gap-8">
       <h1 className="text-2xl font-semibold tracking-tight text-black">
