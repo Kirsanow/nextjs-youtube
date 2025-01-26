@@ -5,6 +5,8 @@ import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { updateTokens } from "@/actions/user";
+import { revalidatePath } from "next/cache";
 
 const textContent = z.object({
   type: z.literal("text"),
@@ -104,6 +106,9 @@ export const createGeneration = async (formData: FormData) => {
       error: "Failed to create generation",
     };
   }
+
+  await updateTokens();
+  revalidatePath(`/generations/${data.id}`, "layout");
 
   return redirect(`/generations/${data.id}`);
 };

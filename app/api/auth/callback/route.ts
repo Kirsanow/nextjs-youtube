@@ -1,3 +1,4 @@
+import { createUserData } from "@/actions/user";
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,6 +12,8 @@ export async function GET(request: NextRequest) {
   if (error) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
+
+  await createUserData();
 
   return NextResponse.redirect(new URL("/tools", request.url));
 }

@@ -14,9 +14,9 @@ export default async function GenerationsPage() {
   if (!generations) return null;
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+    <div className="mx-auto flex flex-col w-full gap-8">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold tracking-tight text-black">
           Your Generations
         </h1>
         <span className="text-muted-foreground">

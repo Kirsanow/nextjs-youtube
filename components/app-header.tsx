@@ -5,7 +5,7 @@ import { config } from "@/config";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-const AppHeader = () => {
+const AppHeader = ({ userData }: { userData: any }) => {
   const pathname = usePathname();
   const router = useRouter();
   return (
@@ -48,13 +48,13 @@ const AppHeader = () => {
             >
               Sign Out
             </button>
-            <Link href="/app/settings" className="relative inline-block pt-1.5">
+            <Link href="/settings" className="relative inline-block pt-1.5">
               <button className="group relative sm:inline-flex" type="button">
                 <img
-                  alt="Avatar for Artem Kirsanov"
+                  alt="Avatar for User"
                   width={36}
                   height={36}
-                  src={"https://api.dicebear.com/9.x/micah/svg?seed=Felix"}
+                  src={userData?.avatar || ""}
                   className="h-9 w-9 rounded-full border border-slate-300 transition-all duration-75 group-focus:outline-none group-active:scale-95 sm:h-10 sm:w-10"
                   draggable="false"
                 />
@@ -103,7 +103,9 @@ const AppHeader = () => {
             <div className="flex items-center space-x-2">
               <h3 className="text-sm font-medium">Tokens</h3>
             </div>
-            <p className="text-sm text-slate-600">20 / 50 tokens</p>
+            <p className="text-sm text-slate-600">
+              {userData?.tokens} / 20 tokens
+            </p>
           </div>
         </div>
       </div>
