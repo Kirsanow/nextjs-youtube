@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { updateAvatar } from "./_actions";
+import { createCustomerPortalSession, updateAvatar } from "./_actions";
 import { UpgradeModal } from "./_components/upgrade-modal";
 
 export default async function SettingsPage() {
@@ -76,6 +76,12 @@ export default async function SettingsPage() {
                 <p className="text-2xl font-bold">{userData?.tokens || 0}</p>
               </div>
               <UpgradeModal />
+              <form action={createCustomerPortalSession}>
+                {/* <input type="hidden" name="userId" value={user?.id} /> */}
+                <Button variant="outline" size="sm">
+                  Manage Subscription
+                </Button>
+              </form>
             </div>
           </CardContent>
         </Card>

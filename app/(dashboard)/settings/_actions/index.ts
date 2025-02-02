@@ -60,8 +60,10 @@ export async function createCheckoutSession({ priceId }: { priceId: string }) {
     ],
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?success=true`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?canceled=true`,
-    metadata: {
-      userId: user.id,
+    subscription_data: {
+      metadata: {
+        userId: user.id,
+      },
     },
   });
 
@@ -72,4 +74,35 @@ export async function createCheckoutSession({ priceId }: { priceId: string }) {
   }
 
   return redirect(checkoutSession.url);
+}
+
+export async function createCustomerPortalSession() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: userData } = await supabase
+    .from("user_data")
+    .select("*")
+    .eq("id", user?.id)
+    .single();
+
+  if (!user) {
+    return redirect("/login");
+  }
+
+  const portalSession = await stripe.billingPortal.sessions.create({
+    customer: userData?.customer_id,
+    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings`,
+  });
+
+  if (!portalSession.url) {
+    return {
+      error: "Failed to create customer portal session",
+    };
+  }
+
+  return redirect(portalSession.url);
 }

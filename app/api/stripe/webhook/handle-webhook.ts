@@ -26,12 +26,17 @@ export async function handleWebhook({
       case "customer.subscription.created":
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        const userId = subscription.metadata.userId;
+        const userId = subscription.metadata?.userId;
+        if (!userId) {
+          console.error("No userId found in subscription metadata");
+          break;
+        }
 
         // Update user's subscription status
         const { error } = await supabase
           .from("user_data")
           .update({
+            customer_id: subscription.customer,
             subscription_id: subscription.id,
             status: subscription.status,
             price_id: subscription.items.data[0].price.id,
